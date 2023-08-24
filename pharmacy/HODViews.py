@@ -7,12 +7,11 @@ from .decorators import *
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone, dateformat
 from django.core.exceptions import ValidationError
-from datetime import datetime
 from django.db.models import Q
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.timezone import datetime 
 
-
+import datetime
 from .forms import *
 from .models import *
 
@@ -27,7 +26,7 @@ def adminDashboard(request):
     total_stock=Stock.objects.all().count()
 
 
-    today = datetime.today()
+    today = datetime.date.today()
     for_today = Patients.objects.filter(date_admitted__year=today.year, date_admitted__month=today.month, date_admitted__day=today.day).count()
     print(for_today)
     exipred=Stock.objects.annotate(
@@ -412,10 +411,7 @@ def editPatient(request,patient_id):
         "form": form,
         "title":"Edit Patient"
     }
-    return render(request, "hod_templates/edit_patient.html", context)
-
-
-       
+    return render(request, "hod_templates/edit_patient.html", context)       
 
     
 def patient_personalRecords(request,pk):

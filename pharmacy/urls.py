@@ -63,11 +63,20 @@ urlpatterns=[
     path('manage_stock2/',pharmacistViews.manageStock,name='manage_stock2'),    
     path('manage_prescrip/',pharmacistViews.managePrescription,name='pharmacist_prescription'),
     path('pharmacist_user/drug_details/<str:pk>/', pharmacistViews.drugDetails, name="drug_detail2"),
-    path('pharmacist_manage_purchase/',pharmacistViews.managePurchasePharmacist,name='manage_purchase_pharmacist'),
-    path('purchase_drug/<pk>/',pharmacistViews.managePurchase,name='purchase_drug'),
-    # path('patient_order_items/<pk>/',pharmacistViews.manageOrderItems,name='manage_orderitems'),
-    path('patient_order_items/<pk>/',pharmacistViews.orderDrugs,name='order_drugs'),
-    path('add_order_item/<pk>/',pharmacistViews.createOrderItem, name='create_order_item'),
+    path('pharmacist_patients_purchase/',pharmacistViews.managePurchasePharmacist,name='manage_purchase_pharmacist'),
+    path('pharmacist_disp/<pk>/',pharmacistViews.pharmacistPurchase,name='pharmacist_purchase'),
+    path('create_order/',pharmacistViews.create,name='create'),
+    path('manage_invoice/',pharmacistViews.manageInvoice,name='manage_invoice'),  
+    path('generate_invoice/<pk>/',pharmacistViews.generateInvoice,name='invoice_gen'),
+    path('consultation_invoice/<pk>/',pharmacistViews.consultationInvoice,name='consultation_invoice'),
+    # Test order drug with new template
+    path('manage_order/<pk>/',pharmacistViews.manageOrder,name='manage_order'),
+    path('update_order/<order_id>/',pharmacistViews.updateOrder,name='update_order'),
+    path('confirm_order/<order_id>/',pharmacistViews.confirmOrder,name='confirm_order'),
+    path('delete_order/<order_id>/',pharmacistViews.deleteOrder,name='delete_order'),
+    path('dispense_form/<order_id>/',pharmacistViews.addOrderItem,name='dispense_form2'),
+    path('delete_drug/<pk>/',pharmacistViews.deleteOrderItem,name='delete_drug'),
+    
 
 
 

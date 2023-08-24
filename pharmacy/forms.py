@@ -132,6 +132,8 @@ class CustomerForm(ModelForm):
         model=Pharmacist
         fields='__all__'
         exclude=['admin','gender','mobile','address']
+
+
        
 
 class DoctorForm(ModelForm):
@@ -164,7 +166,6 @@ class ClerkForm(ModelForm):
         model=PharmacyClerk
         fields='__all__'
         exclude=['admin','gender','mobile','address']
-        
 class HodForm(ModelForm):
     class Meta:
         model=AdminHOD
@@ -189,14 +190,14 @@ class OrderForm(ModelForm):
         
         
 class OrderItemForm(ModelForm):
+    order_id = forms.ModelChoiceField(queryset=Order.objects.all(),widget=forms.HiddenInput(),disabled=True)
+    # unit_price = forms.ModelChoiceField(queryset=OrderItems.objects.all(),widget=forms.HiddenInput(),disabled=True)
+    # total_price = forms.ModelChoiceField(queryset=OrderItems.objects.all(),widget=forms.HiddenInput(),disabled=True)
     class Meta:
         model=OrderItems
         fields='__all__'
-        exclude=['order']
-        
-        # def __str__(self):
-        #     return 'OrderItem#' + str(self.id) + '-Order#' + str(self.order.id)
-        # unique_together = ('order', 'drug_id')       
+        # exclude=['order_id']
+
 
 class DispenseForm(ModelForm):
     # gender_list = (

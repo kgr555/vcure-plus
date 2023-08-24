@@ -44,7 +44,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'pharmacy',
     'crispy_forms',
-    'phonenumber_field', 
+    'phonenumber_field',
+
+ 
 ]
 
 MIDDLEWARE = [

@@ -5,6 +5,8 @@ from django.contrib.auth.forms import  UserCreationForm
 from .decorators import *
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
+from num2words import num2words
+from re import sub
 
 from django.http import HttpResponseRedirect
 from .forms import *
@@ -81,8 +83,245 @@ def managePurchasePharmacist(request):
     context={
         "patients":patient
     }
-    return render(request,'pharmacist_templates/manage_purchase_patients.html',context)
+    return render(request,'pharmacist_templates/manage_purchase_pharmacist.html',context)
 
+def create(request):
+    form=OrderItemForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        return redirect('manage_purchase_pharmacist')
+    
+    context={
+        "form":form,
+    }
+    return render(request,'pharmacist_templates/pharmacist_order_drugs.html',context)
+
+def pharmacistPurchase(request,pk):
+    
+    patient=Patients.objects.get(id=pk)
+    order, created = Order.objects.get_or_create(
+            patient_id=patient,
+            ordered=False,
+            )
+    
+    queryset=Order.objects.get(id=order.id)
+    form=OrderItemForm(request.POST or None, initial={'order_id':queryset})
+    for field in form:
+        print("Field Error:", field.name,  field.errors)
+    if request.method == 'POST':
+        if form.is_valid():
+            form=OrderItemForm(request.POST or None, initial={'order_id':queryset})
+            # orderitem = form.save(commit=False)
+            # orderitem.order_id = order.id
+            form.save()
+            form=OrderItemForm()
+            items = OrderItems.objects.filter(order_id=order.id)
+            context={
+                "patient":patient,
+                "form":form,
+                "order":order,
+                "items":items
+            }
+            return render(request,'pharmacist_templates/pharmacist_order_drugs.html',context)
+    
+    context={
+        "patient":patient,
+        "form":form,
+        "order":order,
+    }
+    return render(request,'pharmacist_templates/pharmacist_order_drugs.html',context)
+
+def createOrder(request, pk):
+    
+    patient=Patients.objects.get(id=pk)
+    order, created = Order.objects.get_or_create(
+            patient_id=patient,
+            ordered=False,
+            )
+    
+    
+    # for field in form:
+    #     print("Field Error:", field.name,  field.errors)
+    if request.method == 'POST':
+        form=OrderForm(request.POST or None, instance=order)
+        # print(instance.id)
+        print(request.POST.get('consultation_fees'))
+        order.consultation_fees = form.cleaned_data['consultation_fees']#request.POST.get('consultation_fees')
+        order.procedure_fees = form.cleaned_data['procedure_fees']#request.POST.get('procedure_fees')
+        order.consultant = form.cleaned_data['consultant']#request.POST.get('consultant')
+        
+        order.save()
+        messages.success(request, "Order Details Updated Successfully.")
+        # order.department = request.POST.get('department')
+
+    form=OrderForm(request.POST or None)
+    context={
+        "patient":patient,
+        "form":form,
+        "order":order,
+    }
+    return render(request,'pharmacist_templates/sample_order.html',context)
+
+def manageOrder(request, pk):
+    
+    patient=Patients.objects.get(id=pk)
+    order, created = Order.objects.get_or_create(
+            patient_id=patient,
+            ordered=False,
+            )    
+
+    if request.method == 'POST':    
+        # update order details
+        # print(request.POST.get('consultation_fees'))
+        order.consultation_fees = request.POST.get('consultation_fees')
+        order.procedure_fees = request.POST.get('procedure_fees')
+        order.physiotherapy_fees = request.POST.get('physiotherapy_fees')
+        order.discount = request.POST.get('discount')
+        order.consultant = request.POST.get('consultant')
+        order.department = request.POST.get('department')
+        order.payment_mode = request.POST.get('payment_mode')
+        
+        order.save()
+        # messages.success(request, "Order Details Updated Successfully.")
+        
+    # get order items from db            
+    items = OrderItems.objects.filter(order_id=order.id)
+    if items.count() > 0:        
+        context={
+            "patient":patient,
+            "order":order,
+            "items":items,
+        }
+    else:
+        context={
+                "patient":patient,
+                "order":order,
+            }
+    return render(request,'pharmacist_templates/sample_order_edit.html',context)
+
+
+def addOrderItem(request, order_id):
+    
+    order, created = Order.objects.get_or_create(
+            id=order_id,
+            ordered=False,
+            )
+    patient=Patients.objects.get(id=order.patient_id.id)
+    form=OrderItemForm(request.POST or None, initial={'order_id':order})
+    
+    for field in form:
+        print("Field Error:", field.name,  field.errors)
+
+    if request.method == 'POST':
+        if form.is_valid():
+            # read value from form
+            username = form.cleaned_data['taken']
+            qu=form.cleaned_data['quantity']
+            drugs=form.cleaned_data['drug_id']
+            
+            if not OrderItems.objects.filter(drug_id=drugs.id, order_id=order_id).exists():
+                # get stock instance  
+                stock= eo=Stock.objects.annotate(
+                expired=ExpressionWrapper(Q(valid_to__lt=Now()), output_field=BooleanField())
+                ).filter(expired=False).get(id=drugs.id)
+                # drugs = Stock.objects.get(id=drug_id)
+                stock.quantity -=qu
+                price = stock.unit_price
+                # print(price)
+                stock.save()
+
+                form=OrderItemForm(request.POST or None, initial={'order_id':order})
+                orderitem = form.save(commit=False)
+                orderitem.unit_price = price
+                orderitem.total_price = price * qu
+                orderitem.save()
+            else:
+                messages.info(request,'Drug item already exists.')
+                
+            # get order items from db            
+            items = OrderItems.objects.filter(order_id=order.id)
+            context={
+                "patient":patient,
+                "order":order,
+                "items":items
+            }
+            return render(request,'pharmacist_templates/sample_order_edit.html',context)
+    
+    context={
+        "patient":patient,
+        "form":form,
+        "order":order,
+    }
+    return render(request,'pharmacist_templates/dispense_drug.html',context)
+
+
+def deleteOrderItem(request,pk):
+    try:    
+        orderitem=OrderItems.objects.get(id=pk)
+        order=Order.objects.get(id=orderitem.order_id.id) 
+              
+        orderitem.delete()
+        # messages.success(request, "Drug deleted successfully")                
+        return redirect('manage_order', order.patient_id.id)
+    except:
+        # messages.error(request, "Drug already deleted")
+        return redirect('manage_order', order.patient_id)
+
+
+def confirmOrder(request, order_id):
+    
+    order=Order.objects.get(id=order_id)    
+    # INSERTING into Order Model
+    if order.ordered == False:             
+        items = OrderItems.objects.filter(order_id=order.id)
+        total = 0
+        for item in items:
+            total += item.total_price
+        
+        order.total_price = total
+        if total > order.discount:
+            order.grand_total = total - order.discount 
+        order.ordered = True 
+        order.save()
+        return redirect('manage_invoice')
+    else:
+        messages.error(request, "Validity Error")
+        return redirect('manage_invoice')
+    
+def deleteOrder(request, order_id):    
+    try:    
+        order=Order.objects.get(id=order_id)
+        if order.ordered == False:         
+            order.delete()
+            messages.success(request, "Order cancelled successfully")                
+            return redirect('pharmacist_home')
+    except:
+        messages.error(request, "Order already deleted")
+        return redirect('pharmacist_home')
+    return redirect('pharmacist_home')
+    
+
+def updateOrder(request, order_id):
+    
+    order=Order.objects.get(id=order_id)
+    patient=Patients.objects.get(id=order.patient_id.id)
+    if order.ordered == False: 
+        order.consultation_fees = request.POST.get('consultation_fees')
+        order.procedure_fees = request.POST.get('procedure_fees')
+        # order.physiotherapy_fees = request.POST.get('physiotherapy_fees')
+        # order.discount = request.POST.get('discount')
+        order.consultant = request.POST.get('consultant')
+        order.department = request.POST.get('department')
+        order.save()    
+    
+    # get order items from db            
+    items = OrderItems.objects.filter(order_id=order.id)
+    context={
+        "patient":patient,
+        "order":order,
+        "items":items
+    }
+    return render(request,'pharmacist_templates/sample_order.html',context)
 
 def managePrescription(request):
     precrip=Dispense.objects.all()
@@ -105,10 +344,67 @@ def manageStock(request):
     ).filter(expired=False)
     context = {
         "stocks": stocks,
-                "expired":ex,
+        "expired":ex,
 
     }
     return render(request,'pharmacist_templates/manage_stock.html',context)
+
+def manageInvoice(request):
+    items = Order.objects.all()
+    items = Order.objects.all().order_by("-id")
+    
+    context = {
+        "items": items,
+    }
+    return render(request,'pharmacist_templates/manage_invoice.html',context)
+
+def generateInvoice(request, pk):    
+    order = Order.objects.get(id=pk)
+    patient=Patients.objects.get(id=order.patient_id.id)
+    orderitem = OrderItems.objects.filter(order_id=pk)
+    
+    amountinwords = to_camel(num2words(order.total_price))
+    
+    
+    context = {
+        "patient": patient,
+        "order": order,
+        "items": orderitem,
+        "amountinwords":amountinwords,
+    }
+    return render(request,'pharmacist_templates/gen_invoice.html',context)
+
+def consultationInvoice(request, pk):    
+    order = Order.objects.get(id=pk)
+    patient=Patients.objects.get(id=order.patient_id.id)
+    orderitem = OrderItems.objects.filter(order_id=pk)
+    
+    total_price = 0
+    if order.consultation_fees > 0:
+        total_price = order.consultation_fees
+        
+    if order.procedure_fees > 0:
+        total_price = total_price + order.procedure_fees
+    
+    if order.physiotherapy_fees > 0:
+        total_price = total_price + order.physiotherapy_fees
+    
+    amountinwords = to_camel(num2words(total_price))
+    
+    
+    context = {
+        "patient": patient,
+        "order": order,
+        "items": orderitem,
+        "amountinwords":amountinwords,
+        "total_price":total_price,
+    }
+    return render(request,'pharmacist_templates/consultation_invoice.html',context)
+
+
+def to_camel(s):
+  s = sub(r"(_|-)+", " ", s).title()
+  return "".join(x[:1].upper() + x[1:] for x in s.split('_'))
 
 
 def manageDispense(request,pk):
@@ -118,11 +414,9 @@ def manageDispense(request,pk):
     print(prescrips)
     form=DispenseForm(request.POST or None,initial={'patient_id':queryset} )
     drugs=Stock.objects.all()
-    # get expired drugs
     ex=Stock.objects.annotate(
     expired=ExpressionWrapper(Q(valid_to__lt=Now()), output_field=BooleanField())
     ).filter(expired=True)
-    # get not expired drugs
     eo=Stock.objects.annotate(
     expired=ExpressionWrapper(Q(valid_to__lt=Now()), output_field=BooleanField())
     ).filter(expired=False)
@@ -137,8 +431,6 @@ def manageDispense(request,pk):
                 qu=form.cleaned_data['dispense_quantity']
                 ka=form.cleaned_data['drug_id']
                 # print(username)
-            
-            
                     
                 stock= eo=Stock.objects.annotate(
                 expired=ExpressionWrapper(Q(valid_to__lt=Now()), output_field=BooleanField())
@@ -166,96 +458,8 @@ def manageDispense(request,pk):
             # "stocks":stock,
             "drugs":drugs,
             "prescrips":prescrips,
-            "expired":ex,
-            "expa":eo,
-
-            }
-        if request.method == 'POST':
-        
-            print(drugs)
-            context={
-                "drugs":drugs,
-                "form":form,
-                "prescrips":prescrips,
-                "patients":queryset,
-                "expired":ex,
-                "expa":eo,
-
-            }
-    except:
-        messages.error(request, "Dispensing Not Allowed! The Drug is Expired ,please contanct the admin for re-stock ")
-        return redirect('manage_patient_pharmacist')
-    
-    context={
-            "patients":queryset,
-            "form":form,
-            # "stocks":stock,
-            "drugs":drugs,
-            "prescrips":prescrips,
-            "expired":ex,
-            "expa":eo,
-
-            }
-    
-    return render(request,'pharmacist_templates/manage_dispense.html',context)
-
-def managePurchase(request,pk):
-    queryset=Patients.objects.get(id=pk)
-    prescrips=queryset.prescription_set.all()
-    
-    print(prescrips)
-    form=OrderForm(request.POST or None,initial={'patient_id':queryset} )
-    drugs=Stock.objects.all()
-    # get expired drugs
-    ex=Stock.objects.annotate(
-    expired=ExpressionWrapper(Q(valid_to__lt=Now()), output_field=BooleanField())
-    ).filter(expired=True)
-    # get not expired drugs
-    eo=Stock.objects.annotate(
-    expired=ExpressionWrapper(Q(valid_to__lt=Now()), output_field=BooleanField())
-    ).filter(expired=False)
-    # print(ex)
-      
-   
-    try:  
-        
-        if request.method == 'POST':
-            if form.is_valid(): 
-                username = form.cleaned_data['taken']
-                qu=form.cleaned_data['dispense_quantity']
-                ka=form.cleaned_data['drug_id']
-                # print(username)
-            
-            
-                    
-                stock= eo=Stock.objects.annotate(
-                expired=ExpressionWrapper(Q(valid_to__lt=Now()), output_field=BooleanField())
-                ).filter(expired=False).get(id=username)
-                form=DispenseForm(request.POST or None, instance=stock)
-                instance=form.save()
-                # print(instance)
-                instance.quantity-=qu
-                instance.save()
-
-                form=DispenseForm(request.POST or None ,initial={'patient_id':queryset})
-                form.save()
-
-                messages.success(request, "Drug Has been Successfully Dispensed")
-
-                return redirect('manage_patient_pharmacist')
-            else:
-                messages.error(request, "Validty Error")
-
-                return redirect('manage_patient_pharmacist')
-
-        context={
-            "patients":queryset,
-            "form":form,
-            # "stocks":stock,
-            "drugs":drugs,
-            "prescrips":prescrips,
-            "expired":ex,
-            "expa":eo,
+"expired":ex,
+"expa":eo,
 
             }
         if request.method == 'POST':
@@ -273,63 +477,19 @@ def managePurchase(request,pk):
     except:
         messages.error(request, "Dispensing Not Allowed! The Drug is Expired ,please contanct the admin for re-stock ")
         return redirect('manage_patient_pharmacist')
-    
     context={
             "patients":queryset,
             "form":form,
             # "stocks":stock,
             "drugs":drugs,
             "prescrips":prescrips,
-            "expired":ex,
-            "expa":eo,
+"expired":ex,
+"expa":eo,
 
             }
     
-    return render(request,'pharmacist_templates/purchase_form.html',context)
+    return render(request,'pharmacist_templates/manage_dispense.html',context)
 
-def orderDrugs(request, pk):
-    form=OrderItemForm(request.POST or None)
-    if form.is_valid():
-        form.save()
-        return redirect('order_drugs')
-    
-    context={
-        "form":form,
-    }
-    return render(request,'pharmacist_templates/patient_order_items.html',context)
-
-def manageOrderItems(request,pk): 
-    queryset=Patients.objects.get(id=pk)
-    order = Order.objects.create(patient_id=queryset)
-    form=OrderItemForm(request.POST or None,initial={'order_id':order} )
-    
-    order_qs = Order.objects.filter(patient_id=queryset, ordered=False)            
-    context={
-            "patients":queryset,
-            "form":form,
-            "order":order,
-            }
-    return render(request,'pharmacist_templates/patient_order_items.html',context)
-
-def createOrderItem(request, pk):
-    order = Order.objects.get(id=pk)
-    patients=Patients.objects.get(id=order.patient_id.id)
-    form=OrderItemForm(request.POST or None,initial={'order_id':order} )
-    if request.method == 'POST':
-        if form.is_valid():         
-            form=OrderItemForm(request.POST or None ,initial={'order_id':order})
-            form.save()
-            messages.success(request, "Drug Has been Successfully Ordered")
-            return redirect('order_drugs')
-            
-    orderitems=OrderItems.objects.all()        
-    context={
-            "patients":patients,
-            "form":form,
-            "order":order,
-            "orderitems":orderitems,
-            }
-    return render(request,'pharmacist_templates/patient_order_items.html',context)
 
 
 def patient_feedback_message(request):

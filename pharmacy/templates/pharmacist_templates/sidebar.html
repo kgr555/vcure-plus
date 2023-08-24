@@ -2,7 +2,7 @@
     <!-- Brand Logo -->
     <a href="" class="brand-link ml-2">
         <img src="{{request.user.pharmacist.profile_pic.url}}" alt="" width="36" height="36" class=" img-circle elevation-3" style="opacity: .8">
-        <span class="brand-text font-weight-light mt-1 ml-3 mmust">H3TS</span>
+        <span class="brand-text font-weight-light mt-1 ml-3 mmust">V-Cure</span>
     </a>
 
 
@@ -34,7 +34,7 @@
                         <i class="nav-icon fas fa-th"></i>
                         <p>
                             Patient
-                            <i class="right fas fa-angle-left"></i>
+                            <i class="right fas fa-angle-right"></i>
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
@@ -75,40 +75,48 @@
             </li> -->
             <li class="nav-item">
                 <a href="#" class="nav-link">
-                    <i class="nav-icon fas fa-th"></i>
+                    <i class="nav-icon fas fa-shopping-cart"></i>
                     <p>
                         Purchase
-                        <i class="right fas fa-angle-left"></i>
+                        <i class="right fas fa-angle-right"></i>
                     </p>
                 </a>
                 <ul class="nav nav-treeview">
 
                     <li class="nav-item pl-2">
                         <a href="{% url 'manage_purchase_pharmacist' %}" class="nav-link">
-                            <i class="fas fa-id-card-alt"></i>
-                            <p class="pl-2">Order Drug</p>
+                            <i class="fas fa-money-check"></i>
+                            <p class="pl-2">Order Drugs</p>
                         </a>
                     </li>
                 </ul>
             </li>
-                <li class="nav-item">
-                    <a href="{% url 'manage_stock2' %}" class="nav-link">
-                        <i class="fas fa-layer-group mr-2"></i>
-                        <p>
-                            Manage Stock
-                        </p>
-                    </a>
-                </li>
+            <li class="nav-item">
+                <a href="{% url 'manage_invoice' %}" class="nav-link">
+                    <i class="fas fa-receipt mr-2"></i>
+                    <p>
+                        Invoice
+                    </p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'manage_stock2' %}" class="nav-link">
+                    <i class="fas fa-layer-group mr-2"></i>
+                    <p>
+                        Manage Stock
+                    </p>
+                </a>
+            </li>
 
-                <li class="nav-item">
-                    <a href="{% url  'patient_feedback_message' %}" class="nav-link">
-                        <i class="fas fa-tachometer-alt mr-2"></i>
-                        <p>
-                            Feedback
-                            <span class="right badge badge-danger">2</span>
-                        </p>
-                    </a>
-                </li>
+            <li class="nav-item">
+                <a href="{% url  'patient_feedback_message' %}" class="nav-link">
+                    <i class="fas fa-tachometer-alt mr-2"></i>
+                    <p>
+                        Feedback
+                        <span class="right badge badge-danger">2</span>
+                    </p>
+                </a>
+            </li>
 
             </ul>
         </nav>

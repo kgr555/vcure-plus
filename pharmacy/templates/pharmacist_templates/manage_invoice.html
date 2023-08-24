@@ -1,0 +1,63 @@
+{% extends 'pharmacist_templates/base_template.html'%} {% block page_title %}
+<h5>Invoice Details</h5>
+
+{% endblock page_title %} {% block main_content %}
+<section class="content">
+    <div class="row">
+        <div class="col-md-12">
+
+
+            <div class="card card-primar sc">
+                <div class="card-header">
+                    Invoice Details
+                </div>
+                {% include 'pharmacist_templates/alert_messeges.html' %}
+
+                <table class="table table-bordered table-hover dataTable" id="plist">
+                    <thead>
+
+                        <tr>
+                            <th>No</th>
+                            <th>Patient</th>
+                            <th>Ordered At</th>
+                            <th>Consultant</th>
+                            <th>Const. Fees</th>
+                            <th>Proc. Fees</th>
+                            <th>Physio. Fees</th>
+                            <th>Payment Mode</th>
+                            <th>Discount</th>
+                            <th>Grand Total</th>
+                            <th class="text-center">Action</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                        <tr class="hov">
+                            <td>{{forloop.counter}}</td>
+                            <td>{{item.patient_id.admin.first_name}} {{item.patient_id.admin.last_name}} </td>
+                            <td>{{item.ordered_at}}</td>
+                            <td>{{item.consultant}}</td>
+                            <td>{{item.consultation_fees}}</td>
+                            <td>{{item.procedure_fees}}</td>
+                            <td>{{item.physiotherapy_fees}}</td>
+                            <td>{{item.payment_mode}}</td>
+                            <td>{{item.discount}}</td>
+                            <td>{{item.grand_total}}</td>
+                            <td>
+                                <a href="{% url 'invoice_gen' item.id %}" class="btn btn-sm btn-success">Print</a>
+                                <a href="{% url 'consultation_invoice' item.id %}" class="btn btn-sm btn-success">Fees</a>
+                            </td>
+
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

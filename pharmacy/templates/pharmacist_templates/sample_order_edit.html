@@ -1,0 +1,222 @@
+{% extends 'pharmacist_templates/base_template.html'%}
+{% load crispy_forms_tags %}
+
+{% block page_title %}
+<h5>Order Patient Drugs</h5>
+
+{% endblock page_title %}
+{% block main_content %}
+<style>
+    
+
+</style>
+<section class="content">  
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-primar sc">
+                <div class="card-header">
+                    <span>Order Details</span>
+                <div class="card-tools d-flex">
+            </div>
+            <div class="card card-primary">            
+                <form  method="POST" style="font-size:13px;" class='px-3 py-2'>
+                    {% csrf_token %}
+
+                    <div class="card-body deco">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Patient Name</label>
+                                    <div class="input-group">
+                                        <span class="input-group-prepend">
+                                <span class="input-group-text">
+                                <i class="fas fa-user"></i>
+                                </span>
+                                        </span>
+                                        <input type="text" class="form-control" name="patient_name" value="{{patient.admin.first_name}} {{patient.admin.last_name}}" disabled="disabled">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Order No</label>
+                                    <div class="input-group">
+                                        <span class="input-group-prepend">
+                                            <span class="input-group-text">
+                                            <i class="fas fa-id-card"></i>
+                                            </span>
+                                        </span>
+                                        <input type="text" class="form-control" name="orderid" value="{{ order.id }}" disabled="disabled">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Order Date</label>
+                                    <div class="input-group">
+                                        <span class="input-group-prepend">
+                                <span class="input-group-text">
+                                <i class="fas fa-calendar"></i>
+                                </span>
+                                        </span>
+                                        <input type="text" class="form-control" name="order_date" value="{{ order.ordered_at }}" disabled="disabled">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Consulation Fees</label>
+                                    <div class="input-group">
+                                        <span class="input-group-prepend">
+                                            <span class="input-group-text">
+                                            <i class="fas fa-rupee-sign"></i>
+                                            </span>
+                                        </span>
+                                        <input type="text" class="form-control" name="consultation_fees" value="{{ order.consultation_fees }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Procedure Fees</label>
+                                    <div class="input-group">
+                                        <span class="input-group-prepend">
+                                            <span class="input-group-text">
+                                            <i class="fas fa-rupee-sign"></i>
+                                            </span>
+                                        </span>
+                                        <input type="text" class="form-control" name="procedure_fees" value="{{ order.procedure_fees }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Physiotherapy Fees</label>
+                                    <div class="input-group">
+                                        <span class="input-group-prepend">
+                                            <span class="input-group-text">
+                                            <i class="fas fa-rupee-sign"></i>
+                                            </span>
+                                        </span>
+                                        <input type="text" class="form-control" name="physiotherapy_fees" value="{{ order.physiotherapy_fees }}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Consultant</label>
+                                    <div class="input-group">
+                                        <span class="input-group-prepend">
+                                            <span class="input-group-text">
+                                            <i class="fas fa-user"></i>
+                                            </span>
+                                        </span>
+                                        <input type="text" class="form-control" name="consultant" value="{{ order.consultant }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Department</label>
+                                    <div class="input-group">
+                                        <span class="input-group-prepend">
+                                            <span class="input-group-text">
+                                            <i class="fas fa-user"></i>
+                                            </span>
+                                        </span>
+                                        <input type="text" class="form-control" name="department" value="{{ order.department }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Discount</label>
+                                    <div class="input-group">
+                                        <span class="input-group-prepend">
+                                            <span class="input-group-text">
+                                            <i class="fas fa-money-bill"></i>
+                                            </span>
+                                        </span>
+                                        <input type="text" class="form-control" name="discount" value="{{ order.discount }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Payment Mode</label>
+                                    <div class="input-group">
+                                        <span class="input-group-prepend">
+                                            <span class="input-group-text">
+                                            <i class="fas fa-money-bill"></i>
+                                            </span>
+                                        </span>
+                                        <input type="text" class="form-control" name="payment_mode" value="{{ order.payment_mode }}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="submit" class="btn btn-info" value="Update">
+                </form>
+            </div>
+        </div>                
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+                
+            <div class="card card-primar sc">
+                <div class="card-header">
+                    <span>Drug Items</span>
+                   <div class="card-tools d-flex">
+                       
+              
+                <a class="btn btn-sm btn-info mr-2" href="{% url 'dispense_form2' order.id %}" role="button">+ Add Drug</a> 
+
+                </div>
+
+            </div>
+                <table  class="table table-bordered table-hover dataTable" id="plist">
+                    <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Drug</th>
+                                <th>Category</th>
+                                <th>Quantiy</th>
+                                <th>Price</th>
+                                <th>Total Price</th>
+                                <th>Action</th>
+                            </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                        <tr class="hov">
+                            <td>{{forloop.counter}}</td>
+                            <td>{{item.drug_id.drug_name}}</td>
+                            <td>{{item.drug_id.category}}</td>
+                            <td>{{item.quantity}}</td>
+                            <td>{{item.unit_price}}</td>
+                            <td>{{item.total_price}}</td>
+                            <td>        
+                                <a href="{% url 'edit_drug' item.id %}" class="btn btn-sm btn-success">Edit</a>                     
+                                <a href="{% url 'delete_drug' item.id %}" class="btn btn-sm btn-danger">Delete</a>                                    
+                            </td>
+    
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                   
+                </table>
+                <div class="card-footer">
+                    <a href="{% url 'confirm_order' order.id %}" class="btn btn btn-info">Confirm</a>
+                    <a href="{% url 'delete_order' order.id %}" class="btn btn btn-danger">Cancel</a>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</section>
+{% endblock main_content %}

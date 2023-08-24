@@ -25,7 +25,10 @@
                                     </div>
                                 </div>
                             </form>
+
+
                         </div>
+
                     </div>
 
                     {% include 'pharmacist_templates/alert_messeges.html' %}
@@ -40,8 +43,12 @@
                                 <th>LastName</th>
                                 <th>Gender</th>
                                 <th>Email</th>
+
                                 <th>Mobile</th>
+
                                 <th>Action</th>
+
+
                             </tr>
                         </thead>
                         <tbody>
@@ -55,11 +62,19 @@
                                 <td>{{patient.gender}}</td>
                                 <td>{{patient.admin.email}}</td>
                                 <td>{{patient.phone_number}}</td>
-                                <td><a href="{% url 'order_drugs' patient.id %}" class="btn btn-sm btn-info">Dispense Drug</a></td>
+
+                                <td><a href="{% url 'manage_order' patient.id %}" class="btn btn-sm btn-info">Dispense Drug</a><td>
+
+
+
+
                             </tr>
                             {% endfor %}
                         </tbody>
+
                     </table>
+
+
                 </div>
             </div>
         </div>
