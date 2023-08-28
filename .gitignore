@@ -1,0 +1,4 @@
+pharm/__pycache__/*.pyc
+pharm/pharmacy/migrations/__pycache__/*.pyc
+pharmacy/__pycache__/*.pyc
+pharmacy/migrations/__pycache__/*.pyc
