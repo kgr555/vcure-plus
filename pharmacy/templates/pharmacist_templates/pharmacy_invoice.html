@@ -1,0 +1,188 @@
+{% extends 'pharmacist_templates/base_template.html'%}
+{% load crispy_forms_tags %}
+
+{% block page_title %}
+<h5>Invoice</h5>
+
+{% endblock page_title %}
+{% block main_content %}
+<style>
+</style>
+<section class="content">
+    <div class="container">
+        <div class="panel panel-default" id="pt">
+            <div class="panel-body">
+                <!-- <div class="row">
+                    <div class="col-12 text-left">
+                        <div id="logo">
+                            <img src="logo.png">
+                        </div>
+                    </div>
+                </div> -->
+                <div class="col-12">
+                    <div class="text-center text-150">
+                        <h1>Dr.Arun's Ortho And Sports Injury Clinic</h1>
+                    </div>
+                </div>              
+                <div class="row">
+                    <div class="col-12">
+                        <div class="text-center text-150">
+                            <span class="text-default-d3">Receipt Cum Bill</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-sm-6 text-left">
+                        <table class="table table-bordered" >
+                            <tr>
+                                <th>Bill No</th>
+                                <td>{{order.id}}</td>
+                            </tr>
+                            <tr>
+                                <th>Patient Name</th>
+                                <td>{{patient.first_name}}</td>
+                            </tr>
+                            <tr>
+                                <th>Age/Sex - DOB</th>
+                                <td>{{patient.age}}/{{patient.gender}} - {{patient.dob}}</td>
+                            </tr>
+                            <tr>
+                                <th>Received By</th>
+                                <td>{{order.payment_mode}}</td>
+                            </tr>
+                            <!-- <tr>
+                                <th>PAN Number</th>
+                                <td>N/A</td>
+                            </tr> -->
+                          </table>
+                    </div>    
+                    <div class="col-md-6 col-sm-6 text-left">
+                        <table class="table table-bordered">
+                            <tr>
+                                <th>Bill Date</th>
+                                <td>{{order.ordered_at}}</td>
+                            </tr>
+                            <tr>
+                                <th>Patient ID</th>
+                                <td>{{patient.id}}</td>
+                            </tr>
+                            <tr>
+                                <th>Consultant</th>
+                                <td>{{order.consultant}}</td>
+                            </tr>
+                            <tr>
+                                <th>Department</th>
+                                <td>{{order.department}}</td>
+                            </tr>
+                            <!-- <tr>
+                                <th>GSTNO</th>
+                                <td>N/A</td>
+                            </tr> -->
+                          </table>    
+                    </div>    
+                </div>    
+                <div class="table-responsive-sm">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Quantity</th>
+                                <th>Unit Price</th>
+                                <th>GST</th>
+                                <th>Net Amt.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in items %}
+                            <tr>
+                                <td>
+                                    <div>{{item.drug_id.drug_name}}</div>
+                                </td>
+                                <td>{{item.quantity}}</td>
+                                <td>{{item.unit_price}}</td>
+                                <td>0</td>
+                                <td>{{item.total_price}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>    
+                <!-- <hr class="nomargin-top"> -->
+                <div class="row">
+                    <div class="col-sm-6 text-left">
+                        <p class="nomargin nopadding">
+                            <strong>Net Amount In (Words)</strong> 
+                            Rupees {{amountinwords}} Only.
+                        </p><br><!-- no P margin for printing - use <br> instead -->
+                        <h4><strong>Clinic</strong> Address</h4>
+                        <address>
+                            Dr.Arun's OrthoCare <br>
+                            5th Main Road, 1st Stage<br>
+                            Vijayanagar, Mysore-570017<br>
+                            Phone: +91-8123459128 <br>
+                        </address>
+                    </div>    
+                    <div class="col-sm-6 text-right">
+                        <table class="table table-bordered">
+                            <tr>
+                              <th>Total Amount</th>
+                              <td>{{order.total_price}}</td>
+                            </tr>
+                            <tr>
+                              <th>Discount %</th>
+                              <td>{{order.discount}}</td>
+                            </tr>
+                            <tr>
+                                <th>GST</th>
+                                <td>0</td>
+                            </tr>
+                            <tr>
+                                <th>Grand Total</th>
+                                <td>{{order.grand_total}}</td>
+                            </tr>
+                          </table> 
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 text-left">
+                        <p class="nomargin nopadding">
+                            <strong>Prepared By</strong> 
+                        </p><br><!-- no P margin for printing - use <br> instead -->
+                        <p class="nomargin nopadding">
+                            <strong>Pharmacist</strong> 
+                        </p><br><!-- no P margin for printing - use <br> instead -->
+                    </div>    
+                    <div class="col-sm-6 text-right">
+                        <p class="nomargin nopadding">
+                            <strong>For : V-Cure Pharmacy</strong> 
+                        </p><br><!-- no P margin for printing - use <br> instead -->
+                        <p class="nomargin nopadding">
+                            <strong>Authorized Signatory</strong> 
+                        </p><br><!-- no P margin for printing - use <br> instead -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="panel panel-default text-right">
+            <div class="panel-body">
+                <!-- <a class="btn btn-warning" href="#"><i class="fa fa-pencil-square-o"></i> EDIT</a>
+                <a class="btn btn-primary" href="#"><i class="fa fa-check"></i> SAVE</a> -->
+                <!-- <a onclick="closeWin()" class="btn btn-info"><i class="fa fa-check"></i> CLOSE</a> -->
+                <a href="{% url 'manage_invoice' %}" class="btn btn-sm btn-info"><i class="fa fa-check"></i>CLOSE</a>
+                <a onclick="myfun('pt')" class="btn btn-sm btn-success"><i class="fa fa-print"></i> PRINT INVOICE</a>
+            </div>
+        </div>
+    </div>  
+  <script type="text/javascript">
+      function myfun(pa){
+      var bk = document.body.innerHTML;
+      var dv = document.getElementById(pa).innerHTML;
+          document.body.innerHTML = dv;
+          //Hide all other elements other than printarea.
+          $("#printarea").show();
+          window.print();
+      }
+  
+  </script>
+{% endblock %}

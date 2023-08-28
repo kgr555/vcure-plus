@@ -40,7 +40,7 @@
                    <div class="card-tools d-flex">
                        
               
-                <a class="btn btn-sm btn-info mr-2" href="{% url 'patient_form' %}" role="button">+ Add Staff</a> 
+                <a class="btn btn-sm btn-info mr-2" href="{% url 'patient_form' %}" role="button">+ Add Patient</a> 
 
             </div>
 
@@ -50,32 +50,24 @@
                             <tr>
                                     <th>No</th>
                                     <th>Profile</th>
-                                    <th>UserName</th>
-                                    <th>LastName</th>
-                                    <th>Email</th>
-            
-                                    <th>Mobile</th>
-            
-                                     <th>Last Login</th>
-                                     <th class="text-center">Action</th>
-                                    
-        
+                                    <th>Patient Name</th>
+                                    <!-- <th>Email</th> -->            
+                                    <th>Mobile</th>            
+                                    <th>Last Appointment</th>
+                                    <th class="text-center">Action</th>
                             </tr>
                     </thead>
                     <tbody>
                             {% for patient in patients %}
-                            <tr class="hov"> <td>{{patient.admin.id}}</td>
+                            <tr class="hov"> <td>{{patient.id}}</td>
                                 <td> <img src="{{patient.profile_pic.url}}" class="" width="35" height="35" alt=""></td>
         
-                                <td>{{patient.admin}}</td>
-                                <td>{{patient.admin.last_name}}</td>
-        
-                                <td>{{patient.admin.email}}</td>
-                                <td>{{patient.phone_number}}</td>
-        
-                                <td>{{patient.admin.last_login}}</td>
+                                <td>{{patient.first_name}} {{patient.last_name}}</td>        
+                                <!-- <td>{{patient.email}}</td> -->
+                                <td>{{patient.phone_number}}</td>        
+                                <td>{{patient.last_login}}</td>
 
-                                <td><a href="{% url 'edit_patient' patient.admin.id %}" class="btn btn-sm btn-success">Edit</a>                     
+                                <td><a href="{% url 'edit_patient' patient.id %}" class="btn btn-sm btn-success">Edit</a>                     
                                     <a href="{% url 'delete_patient' patient.id %}" class="btn btn-sm btn-danger">Delete</a></<a>
                                     <a href="{% url 'patient_record' patient.id %}" class="btn btn-sm btn-warning">View</a></td> 
             

@@ -27,31 +27,29 @@ class ClientForm(forms.Form):
 
 class PatientForm(forms.Form):
 
-    username = forms.CharField(label="Username", max_length=50, widget=forms.TextInput(attrs={"class":"form-control"}))
-    email = forms.EmailField(label="Email", max_length=50, widget=forms.EmailInput(attrs={"class":"form-control"}))
-    password = forms.CharField(label="Password", max_length=50, widget=forms.PasswordInput(attrs={"class":"form-control"}))
-    reg_no = forms.CharField(label="Reg No", max_length=50, widget=forms.TextInput(attrs={"class":"form-control"}))
+    # reg_no = forms.CharField(label="Reg No", max_length=50, widget=forms.TextInput(attrs={"class":"form-control"}))
     first_name = forms.CharField(label="First Name", max_length=50, widget=forms.TextInput(attrs={"class":"form-control"}))
     last_name = forms.CharField(label="Last Name", max_length=50, widget=forms.TextInput(attrs={"class":"form-control"}))
-    address = forms.CharField(label="Address", max_length=50, widget=forms.TextInput(attrs={"class":"form-control"}))
+    # address = forms.CharField(label="Address", max_length=50, widget=forms.TextInput(attrs={"class":"form-control"}))
     phone_number = forms.CharField(label="Mobile", max_length=50)
     gender_list = (
         ('Male','Male'),
         ('Female','Female')
     )
     gender = forms.ChoiceField(label="Gender", choices=gender_list, widget=forms.Select(attrs={"class":"form-control"}))
+    age = forms.CharField(label="Age", max_length=3, widget=forms.TextInput(attrs={"class":"form-control"})) 
     dob= forms.DateField(label="dob", widget=DateInput(attrs={"class":"form-control"}))
 
     # Validations for patient
-    def clean_reg_no(self):
-        reg_no = self.cleaned_data['reg_no']
-        if  not  reg_no:
-            raise ValidationError("This field is required")
-        for instance in Patients.objects.all():
-            if instance.reg_no==reg_no:
-                raise ValidationError( "Registration number aready exist")
+    # def clean_reg_no(self):
+    #     reg_no = self.cleaned_data['reg_no']
+    #     if  not  reg_no:
+    #         raise ValidationError("This field is required")
+    #     for instance in Patients.objects.all():
+    #         if instance.reg_no==reg_no:
+    #             raise ValidationError( "Registration number aready exist")
       
-        return reg_no
+    #     return reg_no
 
 
     def clean_phone_number(self):
@@ -65,18 +63,6 @@ class PatientForm(forms.Form):
                 raise ValidationError( "PhoneNumber aready exist")
         
         return phone_number
-        
-            
-   
-    def clean_username(self):
-        username = self.cleaned_data['username']
-        if  not  username:
-            raise ValidationError("This field is required")
-        for instance in CustomUser.objects.all():
-            if instance.username==username:
-                raise ValidationError( "Username aready exist")
-      
-        return username
 
     def clean_firstName(self):
         first_name = self.cleaned_data['first_name']
@@ -84,19 +70,16 @@ class PatientForm(forms.Form):
             raise ValidationError("This field is required")
         return first_name
 
-    def clean_secondName(self):
-        last_name = self.cleaned_data['last_name']
-        if  not  last_name:
-            raise ValidationError("This field is required")
-        return last_name
+    # def clean_secondName(self):
+    #     last_name = self.cleaned_data['last_name']
+    #     if  not  last_name:
+    #         raise ValidationError("This field is required")
+    #     return last_name
 
-class EditPatientForm(forms.Form):
-    username = forms.CharField(label="Username", max_length=50, widget=forms.TextInput(attrs={"class":"form-control"}))
-    email = forms.EmailField(label="Email", max_length=50, widget=forms.EmailInput(attrs={"class":"form-control"}))
-    
+class EditPatientForm(forms.Form):    
     first_name = forms.CharField(label="First Name", max_length=50, widget=forms.TextInput(attrs={"class":"form-control"}))
     last_name = forms.CharField(label="Last Name", max_length=50, widget=forms.TextInput(attrs={"class":"form-control"}))
-    address = forms.CharField(label="Address", max_length=50, widget=forms.TextInput(attrs={"class":"form-control"}))
+    # address = forms.CharField(label="Address", max_length=50, widget=forms.TextInput(attrs={"class":"form-control"}))
     phone_number = forms.CharField(label="Mobile", max_length=50, widget=forms.TextInput(attrs={"class":"form-control"}))
     gender_list = (
         ('Male','Male'),
@@ -104,8 +87,7 @@ class EditPatientForm(forms.Form):
     )
     gender = forms.ChoiceField(label="Gender", choices=gender_list, widget=forms.Select(attrs={"class":"form-control"}))
     dob= forms.DateField(label="dob", widget=DateInput(attrs={"class":"form-control"}))
-   
-    
+    age = forms.CharField(label="Age", max_length=3, widget=forms.TextInput(attrs={"class":"form-control"})) 
     
 
 class StockForm(forms.ModelForm):
@@ -183,6 +165,19 @@ class PatientForm7(ModelForm):
         model=Patients
         fields='__all__'
 
+
+class OrderForm(ModelForm):
+    class Meta:
+        model=Order
+        fields='__all__'
+        
+        
+class OrderItemForm(ModelForm):
+    order_id = forms.ModelChoiceField(queryset=Order.objects.all(),widget=forms.HiddenInput(),disabled=True)
+    class Meta:
+        model=OrderItems
+        fields=['drug_id','quantity','taken','order_id']
+        # exclude=['order_id']
 
 class DispenseForm(ModelForm):
     # gender_list = (

@@ -25,10 +25,7 @@
                                     </div>
                                 </div>
                             </form>
-
-
                         </div>
-
                     </div>
 
                     {% include 'pharmacist_templates/alert_messeges.html' %}
@@ -38,17 +35,13 @@
                             <tr>
                                 <th>No</th>
                                 <th></th>
-                                <th>UserName</th>
-                                <th>FirstName</th>
-                                <th>LastName</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
                                 <th>Gender</th>
-                                <th>Email</th>
-
+                                <!-- <th>Email</th> -->
                                 <th>Mobile</th>
-
+                                <th>Consultation Date</th>
                                 <th class="text-center">Action</th>
-
-
                             </tr>
                         </thead>
                         <tbody>
@@ -56,26 +49,18 @@
                             <tr class="hov">
                                 <td>{{forloop.counter}}</td>
                                 <td> <img src="{{patient.profile_pic.url}}" class="" width="35" height="35" alt=""></td>
-                                <td>{{patient.admin.username}}</td>
                                 <td>{{patient.first_name}}</td>
                                 <td>{{patient.last_name}}</td>
                                 <td>{{patient.gender}}</td>
-                                <td>{{patient.admin.email}}</td>
+                                <!-- <td>{{patient.admin.email}}</td> -->
                                 <td>{{patient.phone_number}}</td>
+                                <td>{{patient.last_login}}</td>
 
-                                <td>
-                                    <td><a href="{% url 'pharmacist_disp' patient.id %}" class="btn btn-sm btn-info">Dispense</a>
-
-
-
-
+                                <td><a href="{% url 'pharmacist_disp' patient.id %}" class="btn btn-sm btn-info">Dispense</a><td>
                             </tr>
                             {% endfor %}
                         </tbody>
-
                     </table>
-
-
                 </div>
             </div>
         </div>

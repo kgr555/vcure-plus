@@ -1,17 +1,17 @@
-{% extends 'doctor_templates/base_template.html'%} {% block page_title %}
+ {% extends 'pharmacist_templates/base_template.html'%} {% block page_title %}
 <h5>All patients</h5>
 {% endblock page_title %} {% block link %}
 <li class="breadcrumb-item active">all patients </li>
 {% endblock link %} {% block main_content %}
 
-<section class="content">
+<section class="content ">
     <div class="row">
 
         <div class="col-md-12">
 
             <div class="card card-primry  sc">
-                <div class="card card-primar sc">
-                    <div class="card-header">
+                <div class="card sc table-title ">
+                    <div class="card-header ">
                         <span>Patiets Records</span>
                         <div class="card-tools d-flex">
 
@@ -30,20 +30,21 @@
                         </div>
 
                     </div>
-                    <table class="table table-bordered table-hover dataTable">
+
+                    {% include 'pharmacist_templates/alert_messeges.html' %}
+
+                    <table class="table able-striped table-hover" id="plist">
                         <thead>
                             <tr>
                                 <th>No</th>
                                 <th></th>
-                                <th>UserName</th>
                                 <th>FirstName</th>
                                 <th>LastName</th>
                                 <th>Gender</th>
-                                <th>Email</th>
 
                                 <th>Mobile</th>
 
-                                <th class="text-center">Action</th>
+                                <th>Action</th>
 
 
                             </tr>
@@ -56,12 +57,11 @@
                                 <td>{{patient.first_name}}</td>
                                 <td>{{patient.last_name}}</td>
                                 <td>{{patient.gender}}</td>
-                                <!-- <td>{{patient.email}}</td> -->
-                                <td>{{patient.mobile}}</td>
+                                <td>{{patient.phone_number}}</td>
 
-                                <td><a href="{% url 'doctor_prescribe2' patient.id %}" class="btn btn-sm btn-warning">Prescribe</a>
+                                <td><a href="{% url 'manage_order' patient.id %}" class="btn btn-sm btn-info">Dispense Drug</a><td>
 
-                                    <a href="{% url 'patient_record_doctor' patient.id %}" class="btn btn-sm btn-success">View</a></td>
+
 
 
                             </tr>

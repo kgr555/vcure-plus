@@ -47,15 +47,12 @@
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>Pic</th>
-                            <th>UserName</th>
-                            <th>FirstName</th>
-                            <th>LastName</th>
-                            <th>Email</th>
-
-                            <th>Mobile</th>
-
-                            <th>Address</th>
+                            <th>Profile</th>
+                            <th>Patient Name</th>
+                            <th>Age</th>
+                            <!-- <th>Email</th> -->            
+                            <th>Mobile</th>            
+                            <th>Last Appointment</th>
                             <th class="text-center">Action</th>
 
 
@@ -67,15 +64,12 @@
                             <td>{{forloop.counter}}</td>
                             <td> <img src="{{patient.profile_pic.url}}" class="" width="35" height="35" alt=""></td>
 
-                            <td>{{patient.admin.username}}</td>
-                            <td>{{patient.admin.first_name}}</td>
-                            <td>{{patient.admin.last_name}}</td>
-
-                            <td>{{patient.admin.email}}</td>
-                            <td>{{patient.phone_number}}</td>
-
-                            <td>{{patient.address}}</td>
-                            <td><a href="{% url 'edit_patient_clerk' patient.admin.id %}" class="btn btn-sm btn-success">Edit</a>
+                            <td>{{patient.first_name}} {{patient.last_name}}</td>
+                            <td>{{patient.age}}</td>     
+                            <!-- <td>{{patient.email}}</td> -->
+                            <td>{{patient.phone_number}}</td>        
+                            <td>{{patient.last_login}}</td>
+                            <td><a href="{% url 'edit_patient_clerk' patient.id %}" class="btn btn-sm btn-success">Edit</a>
                                 <a href="{% url 'delete_patient_clerk' patient.id %}" class="btn btn-sm btn-danger">Delete</a></<a>
                                 <a href="{% url 'patient_record_clerk' patient.id %}" class="btn btn-sm btn-warning">View</a></td>
 

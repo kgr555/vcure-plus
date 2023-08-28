@@ -64,7 +64,9 @@
                             <th>Drug</th>
                             <th>Category</th>
                             <th>Quantiy</th>
-                            <th>Reorder Level</th>
+                            <th>T.Rate</th>
+                            <th>M.R.P</th>
+                            <th>Net.Amt</th>
                             <th>Date Stocked</th>
                             <th>Expiry Date</th>
                             <th class="text-center">Action</th>
@@ -85,11 +87,9 @@
                                 {% endif %}</span>
 
                             </td>
-                            <td>
-                                {% if stock.reorder_level %}
-                                <a href="{% url 'reorder_level' stock.id %}">{{stock.reorder_level}}</a></td>
-                            {% else %}
-                            <a href="{% url 'reorder_level' stock.id %}">Add level</a> {% endif %}
+                            <td>{{stock.trading_rate}}</td>
+                            <td>{{stock.market_rate}}</td>
+                            <td>{{stock.net_amount}}</td>
                             <td>{{stock.last_updated |date:"F d, Y"}}</td>
 
                             <!-- Checks expired drugs -->

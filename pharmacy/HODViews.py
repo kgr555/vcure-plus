@@ -12,7 +12,7 @@ from django.db.models import Q
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.timezone import datetime 
 
-
+import datetime
 from .forms import *
 from .models import *
 
@@ -26,8 +26,7 @@ def adminDashboard(request):
     out_of_stock=Stock.objects.filter(quantity__lte=0).count()
     total_stock=Stock.objects.all().count()
 
-
-    today = datetime.today()
+    today = datetime.date.today()
     for_today = Patients.objects.filter(date_admitted__year=today.year, date_admitted__month=today.month, date_admitted__day=today.day).count()
     print(for_today)
     exipred=Stock.objects.annotate(
@@ -53,50 +52,30 @@ def adminDashboard(request):
 
 def createPatient(request):
     form=PatientForm()
-
  
     if request.method == "POST":
         form=PatientForm(request.POST, request.FILES)
 
         if form.is_valid():
-
             first_name = form.cleaned_data['first_name']
             last_name = form.cleaned_data['last_name']
-            username = form.cleaned_data['username']
-            email = form.cleaned_data['email']
-            password = form.cleaned_data['password']
-            address = form.cleaned_data['address']
+            # address = form.cleaned_data['address']
             phone_number = form.cleaned_data['phone_number']
             dob = form.cleaned_data['dob']
             gender = form.cleaned_data['gender']
-            reg_no = form.cleaned_data['reg_no']
-
-
-
-            user = CustomUser.objects.create_user(username=username, email=email,password=password, last_name=last_name,user_type=5)
-            user.patients.address = address
-            user.patients.phone_number = phone_number
-            user.patients.dob=dob
-            user.patients.reg_no=reg_no
-            user.patients.first_name=first_name
-            user.patients.last_name=last_name
-            user.patients.gender=gender
-
-            user.save()
-            messages.success(request, username +' was Successfully Added')
-
+            age = form.cleaned_data['age']
+            # reg_no = form.cleaned_data['reg_no']
+            patient = Patients.objects.create(first_name=first_name, last_name=last_name, phone_number=phone_number, dob=dob, gender=gender, age=age)
+            patient.save()
+            messages.success(request, first_name +' was Successfully Added')
             return redirect('patient_form')
-
-          
-   
-
+        
     context={
         "form":form,
         "title":"Add Patient"
     }
        
     return render(request,'hod_templates/patient_form.html',context)
-
 
 
 def allPatients(request):
@@ -348,56 +327,45 @@ def editPatient(request,patient_id):
     # adds patient id into session variable
     request.session['patient_id'] = patient_id
 
-    patient = Patients.objects.get(admin=patient_id)
+    patient = Patients.objects.get(id=patient_id)
 
     form = EditPatientForm()
     
 
     # filling the form with data from the database
-    form.fields['email'].initial = patient.admin.email
-    form.fields['username'].initial = patient.admin.username
     form.fields['first_name'].initial = patient.first_name
     form.fields['last_name'].initial = patient.last_name
-    form.fields['address'].initial = patient.address
+    # form.fields['address'].initial = patient.address
     form.fields['gender'].initial = patient.gender
     form.fields['phone_number'].initial = patient.phone_number
     form.fields['dob'].initial = patient.dob
+    form.fields['age'].initial = patient.age
     if request.method == "POST":
         if patient_id == None:
             return redirect('all_patients')
         form = EditPatientForm( request.POST)
 
         if form.is_valid():
-            
-            email = form.cleaned_data['email']
-            username = form.cleaned_data['username']
             first_name = form.cleaned_data['first_name']
             last_name = form.cleaned_data['last_name']
-            address = form.cleaned_data['address']
+            # address = form.cleaned_data['address']
             gender = form.cleaned_data['gender']
-            dob=form.cleaned_data['dob']
+            dob = form.cleaned_data['dob']
             phone_number = form.cleaned_data['phone_number']
+            age = form.cleaned_data['age']
 
 
             try:
-            # First Update into Custom User Model
-                user = CustomUser.objects.get(id=patient_id)
-                user.username = username
-
-                user.email = email
-                user.save()
-
+                # First Update into Custom User Model
                 # Then Update Students Table
-                patients_edit = Patients.objects.get(admin=patient_id)
-                patients_edit.address = address
+                patients_edit = Patients.objects.get(id=patient_id)
+                # patients_edit.address = address
                 patients_edit.gender = gender
-                patients_edit.dob=dob
-                patients_edit.phone_number=phone_number
+                patients_edit.dob = dob
+                patients_edit.age = age
+                patients_edit.phone_number = phone_number
                 patients_edit.first_name = first_name
-                patients_edit.last_name = last_name
-
-
-                
+                patients_edit.last_name = last_name                
                 patients_edit.save()
                 messages.success(request, "Patient Updated Successfully!")
                 return redirect('all_patients')
@@ -405,17 +373,13 @@ def editPatient(request,patient_id):
                 messages.success(request, "Failed to Update Patient.")
                 return redirect('all_patients')
 
-
     context = {
         "id": patient_id,
         # "username": patient.admin.username,
         "form": form,
         "title":"Edit Patient"
     }
-    return render(request, "hod_templates/edit_patient.html", context)
-
-
-       
+    return render(request, "hod_templates/edit_patient.html", context)       
 
     
 def patient_personalRecords(request,pk):

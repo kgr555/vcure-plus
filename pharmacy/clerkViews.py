@@ -71,24 +71,17 @@ def createPatient(request):
             
                 first_name = form.cleaned_data['first_name']
                 last_name = form.cleaned_data['last_name']
-                username = form.cleaned_data['username']
-                email = form.cleaned_data['email']
-                password = form.cleaned_data['password']
-                address = form.cleaned_data['address']
+                # email = form.cleaned_data['email']
+                # address = form.cleaned_data['address']
                 phone_number = form.cleaned_data['phone_number']
                 dob = form.cleaned_data['dob']
                 gender = form.cleaned_data['gender']
-            
-        
-            user = CustomUser.objects.create_user(username=username, email=email,password=password, first_name=first_name, last_name=last_name,user_type=5)
-            user.patients.address = address
-            user.patients.phone_number = phone_number
-            user.patients.dob=dob
-            user.patients.gender=gender
-            user.save()
+                age = form.cleaned_data['age']
+                patient = Patients.objects.create(first_name=first_name, last_name=last_name, phone_number=phone_number, dob=dob, gender=gender, age=age)
+                patient.save()
 
-            messages.success(request, "Patient Added Successfully!")
-            return redirect('patient_form2')
+                messages.success(request, "Patient Added Successfully!")
+                return redirect('patient_form2')
             
     except:
         
@@ -117,19 +110,17 @@ def allPatients(request):
 def editPatient(request,patient_id):
     request.session['patient_id'] = patient_id
 
-    patient = Patients.objects.get(admin=patient_id)
+    patient = Patients.objects.get(id=patient_id)
 
     form = EditPatientForm()
     
-
-    form.fields['email'].initial = patient.admin.email
-    form.fields['username'].initial = patient.admin.username
-    form.fields['first_name'].initial = patient.admin.first_name
-    form.fields['last_name'].initial = patient.admin.last_name
-    form.fields['address'].initial = patient.address
+    form.fields['first_name'].initial = patient.first_name
+    form.fields['last_name'].initial = patient.last_name
+    # form.fields['address'].initial = patient.address
     form.fields['gender'].initial = patient.gender
     form.fields['phone_number'].initial = patient.phone_number
     form.fields['dob'].initial = patient.dob
+    form.fields['age'].initial = patient.age
     try:
         if request.method == "POST":
             if patient_id == None:
@@ -137,30 +128,23 @@ def editPatient(request,patient_id):
             form = EditPatientForm( request.POST)
 
             if form.is_valid():
-                
-                email = form.cleaned_data['email']
-                username = form.cleaned_data['username']
                 first_name = form.cleaned_data['first_name']
                 last_name = form.cleaned_data['last_name']
-                address = form.cleaned_data['address']
+                # address = form.cleaned_data['address']
                 gender = form.cleaned_data['gender']
                 dob=form.cleaned_data['dob']
                 phone_number = form.cleaned_data['phone_number']
-
+                age = form.cleaned_data['age']
 
                 try:
-                    user = CustomUser.objects.get(id=patient_id)
-                    user.first_name = first_name
-                    user.last_name = last_name
-                    user.email = email
-                    user.username = username
-                    user.save()
-
-                    patients_edit = Patients.objects.get(admin=patient_id)
-                    patients_edit.address = address
+                    patients_edit = Patients.objects.get(id=patient_id)
+                    patients_edit.first_name = first_name
+                    patients_edit.last_name = last_name
+                    # patients_edit.address = address
                     patients_edit.gender = gender
-                    patients_edit.dob=dob
-                    patients_edit.phone_number=phone_number
+                    patients_edit.dob = dob
+                    patients_edit.phone_number = phone_number
+                    patients_edit.age = age
                     
                     patients_edit.save()
                     messages.success(request, "Patient Updated Successfully!")

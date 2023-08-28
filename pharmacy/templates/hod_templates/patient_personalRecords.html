@@ -21,8 +21,8 @@
                         <tr>
                             <td>Full Name: {{patient.patientname}}</td>
                             <br>
-                            <td>Email: {{ patient.admin.email }}</td>
-                            <br>
+                            <!-- <td>Email: {{ patient.admin.email }}</td>
+                            <br> -->
                             <td>Age: {{ patient.age }}</td>
                             <br>
                             <td>Gender: {{ patient.gender }}</td>
@@ -52,7 +52,7 @@
         <div class="col-lg-5">
             <div class="card">
                 <div class="card-header">
-                    <i class="fa fa-align-justify"></i> Teachers Personal Info
+                    <i class="fa fa-align-justify"></i> Patient's Personal Info
                 </div>
                 <div class="card-body">
 
@@ -61,17 +61,12 @@
                             <tr>
                                 <th>No</th>
                                 <th></th>
-                                <th>UserName</th>
                                 <th>FirstName</th>
                                 <th>LastName</th>
                                 <th>Gender</th>
-                                <th>Email</th>
-
+                                <!-- <th>Email</th> -->
                                 <th>Mobile</th>
-
                                 <th class="text-center">Action</th>
-
-
                             </tr>
                         </thead>
                         <tbody>
@@ -81,26 +76,17 @@
                                 <td>{{stock.patient_id.first_name}}</td>
                                 <td>{{stock.sto}}</td>
                                 <td>{{stock.quantity}}</td>
-                                <td>{{patient.admin.email}}</td>
+                                <!-- <td>{{patient.admin.email}}</td> -->
                                 <td>{{stock.patient_id.first_name}}</td>
                                 <td>
-
-
-
-
                             </tr>
                             {% endfor %}
                         </tbody>
-
                     </table>
-
-
                 </div>
             </div>
         </div>
     </div>
-
-
 </div>
 
 {% endblock %}

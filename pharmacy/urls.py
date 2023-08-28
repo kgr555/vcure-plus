@@ -59,10 +59,18 @@ urlpatterns=[
 #    path('manage_dispe/<str:pk>/',pharmacistViews.dispenseDrug,name='pharm_disp'),
     # path('manage_stock_form/<str:pk>/',pharmacistViews.dispense,name='pharm_disp2'),
     path('staff_profile/',pharmacistViews.userProfile,name='pharmacist_profile'),
-
     path('manage_stock2/',pharmacistViews.manageStock,name='manage_stock2'),    
     path('manage_prescrip/',pharmacistViews.managePrescription,name='pharmacist_prescription'),
     path('pharmacist_user/drug_details/<str:pk>/', pharmacistViews.drugDetails, name="drug_detail2"),
+    # Purchase multiple drugs code
+    path('pharmacist_patients_purchase/',pharmacistViews.managePurchasePharmacist,name='manage_purchase_pharmacist'),
+    path('manage_order/<pk>/',pharmacistViews.manageOrder,name='manage_order'),
+    path('confirm_order/<order_id>/',pharmacistViews.confirmOrder,name='confirm_order'),
+    path('delete_order/<order_id>/',pharmacistViews.deleteOrder,name='delete_order'),
+    path('dispense_form/<order_id>/',pharmacistViews.addOrderItem,name='dispense_form2'),
+    path('manage_invoice/',pharmacistViews.manageInvoice,name='manage_invoice'),
+    path('generate_invoice/<pk>/',pharmacistViews.generateInvoice,name='invoice_gen'),
+    path('consultation_invoice/<pk>/',pharmacistViews.consultationInvoice,name='consultation_invoice'),
 
 
 

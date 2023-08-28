@@ -8,7 +8,7 @@ class PatientsAdmin(admin.ModelAdmin):
 class UserModel(UserAdmin):
     pass
 admin.site.register(CustomUser, UserModel)
-admin.site.register(Patients,PatientsAdmin)
+admin.site.register(Patients)
 admin.site.register(Pharmacist)
 admin.site.register(AdminHOD)
 admin.site.register(Stock)
@@ -18,6 +18,8 @@ admin.site.register(PharmacyClerk)
 admin.site.register(Prescription)
 admin.site.register(Dispense)
 admin.site.register(PatientFeedback)
+admin.site.register(Order)
+admin.site.register(OrderItems)
 
 
    

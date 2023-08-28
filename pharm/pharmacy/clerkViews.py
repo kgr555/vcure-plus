@@ -78,18 +78,10 @@ def createPatient(request):
                 phone_number = form.cleaned_data['phone_number']
                 dob = form.cleaned_data['dob']
                 gender = form.cleaned_data['gender']
-            
-        
-            user = CustomUser.objects.create_user(username=username, email=email,password=password, first_name=first_name, last_name=last_name,user_type=5)
-            user.patients.address = address
-            user.patients.phone_number = phone_number
-            user.patients.dob=dob
-            user.patients.gender=gender
-            user.save()
+                form.save()
 
-            messages.success(request, "Patient Added Successfully!")
-            return redirect('patient_form2')
-            
+                messages.success(request, "Patient Added Successfully!")
+                return redirect('patient_form2')            
     except:
         
         messages.error(request,'Patient Not Saved')
@@ -149,13 +141,6 @@ def editPatient(request,patient_id):
 
 
                 try:
-                    user = CustomUser.objects.get(id=patient_id)
-                    user.first_name = first_name
-                    user.last_name = last_name
-                    user.email = email
-                    user.username = username
-                    user.save()
-
                     patients_edit = Patients.objects.get(admin=patient_id)
                     patients_edit.address = address
                     patients_edit.gender = gender
@@ -178,8 +163,6 @@ def editPatient(request,patient_id):
         "form": form
     }
     return render(request, "clerk_templates/edit_patient.html", context)
-
-
        
 
 @login_required
