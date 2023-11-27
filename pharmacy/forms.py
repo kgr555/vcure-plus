@@ -38,8 +38,12 @@ class PatientForm(forms.Form):
     )
     gender = forms.ChoiceField(label="Gender", choices=gender_list, widget=forms.Select(attrs={"class":"form-control"}))
     age = forms.CharField(label="Age", max_length=3, widget=forms.TextInput(attrs={"class":"form-control"})) 
-    dob= forms.DateField(label="dob", widget=DateInput(attrs={"class":"form-control"}))
+    # dob= forms.DateField(label="dob", widget=DateInput(attrs={"class":"form-control"}))
 
+    class Meta:
+        model=Patients
+        fields='__all__'
+        exclude=['dob']
     # Validations for patient
     # def clean_reg_no(self):
     #     reg_no = self.cleaned_data['reg_no']

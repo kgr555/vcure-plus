@@ -71,6 +71,11 @@ urlpatterns=[
     path('manage_invoice/',pharmacistViews.manageInvoice,name='manage_invoice'),
     path('generate_invoice/<pk>/',pharmacistViews.generateInvoice,name='invoice_gen'),
     path('consultation_invoice/<pk>/',pharmacistViews.consultationInvoice,name='consultation_invoice'),
+    path('pharmacist/patient_form/',pharmacistViews.createPatient,name='patient_form'),
+    path('pharmacist/all_patients/',pharmacistViews.allPatients,name='all_patients'),
+    path('pharmacist/edit_patient/<patient_id>/',pharmacistViews.editPatient,name='edit_patient'),
+    # path('add_patient_save/',pharmacistViews.editPatientSave,name='edit_patient_save'),
+    path('pharmacist/delete_patient/<str:pk>/',pharmacistViews.confirmDelete,name='delete_patient'),
 
 
 

@@ -75,7 +75,7 @@ def managePatientsPharmacist(request):
     context={
         "patients":patient
     }
-    return render(request,'pharmacist_templates/manage_patients.html',context)
+    return render(request,'pharmacist_templates/patients_dispense.html',context)
 
 
 def managePrescription(request):
@@ -454,6 +454,129 @@ def deleteDispense4(request,pk):
    
     return render(request,'pharmacist_templates/sure_delete.html')
     
+
+def createPatient(request):
+    form=PatientForm()
+ 
+    if request.method == "POST":
+        form=PatientForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            first_name = form.cleaned_data['first_name']
+            last_name = form.cleaned_data['last_name']
+            # address = form.cleaned_data['address']
+            phone_number = form.cleaned_data['phone_number']
+            # dob = form.cleaned_data['dob']
+            gender = form.cleaned_data['gender']
+            age = form.cleaned_data['age']
+            # reg_no = form.cleaned_data['reg_no']
+            patient = Patients.objects.create(first_name=first_name, last_name=last_name, phone_number=phone_number, gender=gender, age=age)
+            patient.save()
+            messages.success(request, first_name +' was Successfully Added')
+            return redirect('patient_form')
+        
+    context={
+        "form":form,
+        "title":"Add Patient"
+    }
+       
+    return render(request,'pharmacist_templates/patient_form.html',context)
+
+
+def allPatients(request):
+    form=PatientSearchForm1(request.POST or None)
+    patients=Patients.objects.all()
+    context={
+        "patients":patients,
+        "form":form,
+        "title":"Admitted Patients"
+    }
+    if request.method == 'POST':
+        # admin=form['first_name'].value()
+        name = request.POST.get('search')
+        patients=Patients.objects.filter(first_name__icontains=name) 
+       
+        context={
+            "patients":patients,
+            form:form
+        }
+    return render(request,'pharmacist_templates/admited_patients.html',context)
+
+def editPatient(request,patient_id):
+    # adds patient id into session variable
+    request.session['patient_id'] = patient_id
+
+    patient = Patients.objects.get(id=patient_id)
+
+    form = EditPatientForm()
+    
+
+    # filling the form with data from the database
+    form.fields['first_name'].initial = patient.first_name
+    form.fields['last_name'].initial = patient.last_name
+    # form.fields['address'].initial = patient.address
+    form.fields['gender'].initial = patient.gender
+    form.fields['phone_number'].initial = patient.phone_number
+    form.fields['dob'].initial = patient.dob
+    form.fields['age'].initial = patient.age
+    if request.method == "POST":
+        if patient_id == None:
+            return redirect('all_patients')
+        form = EditPatientForm( request.POST)
+
+        if form.is_valid():
+            first_name = form.cleaned_data['first_name']
+            last_name = form.cleaned_data['last_name']
+            # address = form.cleaned_data['address']
+            gender = form.cleaned_data['gender']
+            dob = form.cleaned_data['dob']
+            phone_number = form.cleaned_data['phone_number']
+            age = form.cleaned_data['age']
+
+
+            try:
+                # First Update into Custom User Model
+                # Then Update Students Table
+                patients_edit = Patients.objects.get(id=patient_id)
+                # patients_edit.address = address
+                patients_edit.gender = gender
+                patients_edit.dob = dob
+                patients_edit.age = age
+                patients_edit.phone_number = phone_number
+                patients_edit.first_name = first_name
+                patients_edit.last_name = last_name                
+                patients_edit.save()
+                messages.success(request, "Patient Updated Successfully!")
+                return redirect('all_patients')
+            except:
+                messages.success(request, "Failed to Update Patient.")
+                return redirect('all_patients')
+
+    context = {
+        "id": patient_id,
+        # "username": patient.admin.username,
+        "form": form,
+        "title":"Edit Patient"
+    }
+    return render(request, "pharmacist_templates/edit_patient.html", context)
+
+
+def confirmDelete(request,pk):
+    try:
+        patient=Patients.objects.get(id=pk)
+        if request.method == 'POST':
+            patient.delete()
+            return redirect('all_patients')
+    except:
+        messages.error(request, "Patient Cannot be deleted  deleted , Patient is still on medication or an error occured")
+        return redirect('all_patients')
+
+    context={
+        "patient":patient,
+
+    }
+    
+    return render(request,'pharmacist_templates/sure_delete.html',context)
 
 
 

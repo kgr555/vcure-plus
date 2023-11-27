@@ -38,8 +38,20 @@
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
-
                         <li class="nav-item pl-2">
+                            <a href="{% url 'patient_form' %}" class="nav-link">
+                                <i class="fas fa-user-plus"></i>
+                                <p class="pl-2">Add Patient</p>
+                            </a>
+                        </li>
+                        <li class="nav-item pl-2">
+                            <a href="{% url 'all_patients'  %}" class="nav-link">
+                                <i class="fas fa-th"></i>
+                                <p class="pl-2">Manage Patient</p>
+                            </a>
+                        </li>
+
+                        <!-- <li class="nav-item pl-2">
                             <a href="{% url 'manage_patient_pharmacist' %}" class="nav-link">
                                 <i class="fas fa-id-card-alt"></i>
                                 <p class="pl-2">Dispense</p>
@@ -51,7 +63,7 @@
                                 <i class="fas fa-pills"></i>
                                 <p class="pl-2">Manage disp</p>
                             </a>
-                        </li>
+                        </li> -->
                     </ul>
                 </li>
                 <!-- <li class="nav-item">
@@ -86,7 +98,7 @@
                         <li class="nav-item pl-2">
                             <a href="{% url 'manage_purchase_pharmacist' %}" class="nav-link">
                                 <i class="fas fa-money-check"></i>
-                                <p class="pl-2">Order Drugs</p>
+                                <p class="pl-2">Dispense Drugs</p>
                             </a>
                         </li>
                     </ul>
